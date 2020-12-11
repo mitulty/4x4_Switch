@@ -1,0 +1,34 @@
+// This is and alternative design to the priority select module. This design reduces the performance of the system.
+$module [prioritySelect]
+	$in (down_counter: $uint<16> active_packet: $uint<3>
+			pkt_with_priority:$uint<3> p1_valid p2_valid p3_valid p4_valid: $uint<1>) 
+	$out (next_active_packet: $uint<3> next_pkt_with_priority: $uint<3>)
+$is
+{
+	$branchblock [block_priority_select]
+	{
+		$merge $entry loopback
+			$phi I:=($bitcast($uint<3>) 0) $on $entry
+					NI $on loopback
+		$endmerge
+		$volatile param :=((pkt_with_priority-ONE_3)+I)
+		// Implementing the modulo operator
+		V:=(param >> 2)
+		$volatile packet_no := ((param -(FOUR*V))+ONE_3) 
+		$volatile valid_bit :=  ($mux (packet_no==1) p1_valid
+					($mux (packet_no==2) p2_valid
+					($mux (packet_no==3) p3_valid p4_valid)))
+		NI:=(I+1)
+		selected_packet := ($mux valid_bit packet_no 0 )
+		$if ((NI < 4) & (valid_bit==0)) $then
+			$place [loopback]
+		$endif
+	}(selected_packet=>selected_packet)
+	d0 := (down_counter == 0)
+	next_active_packet :=($mux d0 selected_packet active_packet )
+
+	next_pkt_with_priority := ($mux (next_active_packet==1)2
+				  ($mux (next_active_packet==2)3
+				  ($mux (next_active_packet==3)4 1)))		
+					
+}

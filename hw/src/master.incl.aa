@@ -1,0 +1,808 @@
+
+
+
+
+
+
+$module [ inputPort_1_Daemon ]
+	$in () $out () $is
+{
+	$branchblock[loop] {
+		$dopipeline $depth INPUT_PORT_PIPELINE_DEPTH
+				$fullrate
+
+			$merge $entry $loopback 
+				$phi count_down   := 
+						($bitcast ($uint<16>) 0) $on $entry
+							next_count_down $on $loopback
+				$phi input_word   := in_data_1 $on $entry, $loopback
+				$phi last_dest_id :=  0 $on $entry next_last_dest_id
+								$on $loopback
+			$endmerge
+			
+			$volatile new_packet := (count_down == 0)
+			$rreport ( inputPort_1_Daemon   received_input_word input_word)
+			$volatile $split (input_word 8 16 8)(dest_id pkt_length seq_id)
+			$volatile next_count_down :=($mux new_packet (pkt_length - 1) (count_down - 1))
+
+			$volatile next_last_dest_id :=($mux new_packet dest_id last_dest_id)
+
+
+			// add valid bit for noblock.
+			$volatile data_to_outport := ($concat ONE_1 input_word)
+			// Convert these four sections to a parallel block
+
+			$volatile send_to_1 := (next_last_dest_id == 1)
+			$guard (send_to_1)
+				noblock_obuf_1_1 := data_to_outport
+
+			$volatile send_to_2 := (next_last_dest_id == 2)
+			$guard (send_to_2)
+				noblock_obuf_1_2 := data_to_outport
+
+			$volatile send_to_3 := (next_last_dest_id == 3)
+			$guard (send_to_3)
+				noblock_obuf_1_3 := data_to_outport	
+
+			$volatile send_to_4 := (next_last_dest_id == 4)
+			$guard (send_to_4)
+				noblock_obuf_1_4 := data_to_outport
+
+			$rreport ( inputPort_1_Daemon   write_status send_to_1 send_to_2 send_to_3 send_to_4 data_to_outport new_packet 
+					last_dest_id next_last_dest_id count_down)
+
+		$while 1
+	}
+}
+
+
+
+
+
+
+
+
+
+$module [ inputPort_2_Daemon ]
+	$in () $out () $is
+{
+	$branchblock[loop] {
+		$dopipeline $depth INPUT_PORT_PIPELINE_DEPTH
+				$fullrate
+
+			$merge $entry $loopback 
+				$phi count_down   := 
+						($bitcast ($uint<16>) 0) $on $entry
+							next_count_down $on $loopback
+				$phi input_word   := in_data_2 $on $entry, $loopback
+				$phi last_dest_id :=  0 $on $entry next_last_dest_id
+								$on $loopback
+			$endmerge
+			
+			$volatile new_packet := (count_down == 0)
+			$rreport ( inputPort_2_Daemon   received_input_word input_word)
+			$volatile $split (input_word 8 16 8)(dest_id pkt_length seq_id)
+			$volatile next_count_down :=($mux new_packet (pkt_length - 1) (count_down - 1))
+
+			$volatile next_last_dest_id :=($mux new_packet dest_id last_dest_id)
+
+
+			// add valid bit for noblock.
+			$volatile data_to_outport := ($concat ONE_1 input_word)
+			// Convert these four sections to a parallel block
+
+			$volatile send_to_1 := (next_last_dest_id == 1)
+			$guard (send_to_1)
+				noblock_obuf_2_1 := data_to_outport
+
+			$volatile send_to_2 := (next_last_dest_id == 2)
+			$guard (send_to_2)
+				noblock_obuf_2_2 := data_to_outport
+
+			$volatile send_to_3 := (next_last_dest_id == 3)
+			$guard (send_to_3)
+				noblock_obuf_2_3 := data_to_outport	
+
+			$volatile send_to_4 := (next_last_dest_id == 4)
+			$guard (send_to_4)
+				noblock_obuf_2_4 := data_to_outport
+
+			$rreport ( inputPort_2_Daemon   write_status send_to_1 send_to_2 send_to_3 send_to_4 data_to_outport new_packet 
+					last_dest_id next_last_dest_id count_down)
+
+		$while 1
+	}
+}
+
+
+
+
+
+
+
+
+
+$module [ inputPort_3_Daemon ]
+	$in () $out () $is
+{
+	$branchblock[loop] {
+		$dopipeline $depth INPUT_PORT_PIPELINE_DEPTH
+				$fullrate
+
+			$merge $entry $loopback 
+				$phi count_down   := 
+						($bitcast ($uint<16>) 0) $on $entry
+							next_count_down $on $loopback
+				$phi input_word   := in_data_3 $on $entry, $loopback
+				$phi last_dest_id :=  0 $on $entry next_last_dest_id
+								$on $loopback
+			$endmerge
+			
+			$volatile new_packet := (count_down == 0)
+			$rreport ( inputPort_3_Daemon   received_input_word input_word)
+			$volatile $split (input_word 8 16 8)(dest_id pkt_length seq_id)
+			$volatile next_count_down :=($mux new_packet (pkt_length - 1) (count_down - 1))
+
+			$volatile next_last_dest_id :=($mux new_packet dest_id last_dest_id)
+
+
+			// add valid bit for noblock.
+			$volatile data_to_outport := ($concat ONE_1 input_word)
+			// Convert these four sections to a parallel block
+
+			$volatile send_to_1 := (next_last_dest_id == 1)
+			$guard (send_to_1)
+				noblock_obuf_3_1 := data_to_outport
+
+			$volatile send_to_2 := (next_last_dest_id == 2)
+			$guard (send_to_2)
+				noblock_obuf_3_2 := data_to_outport
+
+			$volatile send_to_3 := (next_last_dest_id == 3)
+			$guard (send_to_3)
+				noblock_obuf_3_3 := data_to_outport	
+
+			$volatile send_to_4 := (next_last_dest_id == 4)
+			$guard (send_to_4)
+				noblock_obuf_3_4 := data_to_outport
+
+			$rreport ( inputPort_3_Daemon   write_status send_to_1 send_to_2 send_to_3 send_to_4 data_to_outport new_packet 
+					last_dest_id next_last_dest_id count_down)
+
+		$while 1
+	}
+}
+
+
+
+
+
+
+
+
+
+$module [ inputPort_4_Daemon ]
+	$in () $out () $is
+{
+	$branchblock[loop] {
+		$dopipeline $depth INPUT_PORT_PIPELINE_DEPTH
+				$fullrate
+
+			$merge $entry $loopback 
+				$phi count_down   := 
+						($bitcast ($uint<16>) 0) $on $entry
+							next_count_down $on $loopback
+				$phi input_word   := in_data_4 $on $entry, $loopback
+				$phi last_dest_id :=  0 $on $entry next_last_dest_id
+								$on $loopback
+			$endmerge
+			
+			$volatile new_packet := (count_down == 0)
+			$rreport ( inputPort_4_Daemon   received_input_word input_word)
+			$volatile $split (input_word 8 16 8)(dest_id pkt_length seq_id)
+			$volatile next_count_down :=($mux new_packet (pkt_length - 1) (count_down - 1))
+
+			$volatile next_last_dest_id :=($mux new_packet dest_id last_dest_id)
+
+
+			// add valid bit for noblock.
+			$volatile data_to_outport := ($concat ONE_1 input_word)
+			// Convert these four sections to a parallel block
+
+			$volatile send_to_1 := (next_last_dest_id == 1)
+			$guard (send_to_1)
+				noblock_obuf_4_1 := data_to_outport
+
+			$volatile send_to_2 := (next_last_dest_id == 2)
+			$guard (send_to_2)
+				noblock_obuf_4_2 := data_to_outport
+
+			$volatile send_to_3 := (next_last_dest_id == 3)
+			$guard (send_to_3)
+				noblock_obuf_4_3 := data_to_outport	
+
+			$volatile send_to_4 := (next_last_dest_id == 4)
+			$guard (send_to_4)
+				noblock_obuf_4_4 := data_to_outport
+
+			$rreport ( inputPort_4_Daemon   write_status send_to_1 send_to_2 send_to_3 send_to_4 data_to_outport new_packet 
+					last_dest_id next_last_dest_id count_down)
+
+		$while 1
+	}
+}
+
+
+
+
+
+
+
+
+
+
+$module [ outputPort_1_Daemon ]
+	$in () $out () $is
+{
+	$branchblock[loop] {
+
+		$dopipeline $depth OUTPUT_PORT_PIPELINE_DEPTH 
+			$fullrate 
+
+			$merge $entry $loopback
+
+				$phi pkt_1_e_word := 
+					ZERO_33 $on $entry 
+						$guard (read_from_1) 
+							noblock_obuf_1_1  $on $loopback
+
+
+				$phi pkt_2_e_word := 
+					ZERO_33 $on $entry 
+						$guard (read_from_2) 
+							noblock_obuf_2_1  $on $loopback
+
+
+				$phi pkt_3_e_word := 
+					ZERO_33 $on $entry 
+						$guard (read_from_3) 
+							noblock_obuf_3_1  $on $loopback
+
+
+				$phi pkt_4_e_word := 
+					ZERO_33 $on $entry 
+						$guard (read_from_4) 
+							noblock_obuf_4_1  $on $loopback
+
+				$phi active_packet := 
+					ZERO_3 $on $entry next_active_packet $on $loopback
+				
+			$phi down_counter := 
+					ZERO_16 $on $entry next_down_counter $on $loopback
+
+			$phi pkt_with_priority := 
+					1 $on $entry next_pkt_with_priority $on $loopback
+
+			$endmerge				
+			$volatile p1_valid := (pkt_1_e_word [] 32)
+			$volatile p2_valid := (pkt_2_e_word [] 32)
+			$volatile p3_valid := (pkt_3_e_word [] 32)
+			$volatile p4_valid := (pkt_4_e_word [] 32)
+			//
+			// This report statement is useful in debugging.
+			//
+			$rreport ( outputPort_1_Daemon 
+					state_summary 
+						active_packet
+						down_counter
+						pkt_with_priority
+						read_from_1 
+						pkt_1_e_word 
+						read_from_2
+						pkt_2_e_word
+						read_from_3 
+						pkt_3_e_word
+						read_from_4
+						pkt_4_e_word
+				)
+
+
+			$volatile valid_active_pkt_word_read :=
+				($excmux 
+					(active_packet == 1) p1_valid
+					(active_packet == 2) p2_valid
+					(active_packet == 3) p3_valid
+					(active_packet == 4) p4_valid)
+
+			
+			$volatile $call prioritySelect 
+					   (down_counter active_packet pkt_with_priority p1_valid p2_valid p3_valid p4_valid)
+							(next_active_packet next_pkt_with_priority)
+
+			$volatile valid_active_pkt_length :=
+				($excmux 
+					(next_active_packet == 1) ($slice pkt_1_e_word 23 8)
+					(next_active_packet == 2) ($slice pkt_2_e_word 23 8)
+					(next_active_packet == 3) ($slice pkt_3_e_word 23 8)
+					(next_active_packet == 4) ($slice pkt_4_e_word 23 8))
+			$volatile started_new_packet := 
+				((next_active_packet != 0) & (down_counter == 0))
+
+
+			$volatile next_down_counter :=
+				($mux started_new_packet (valid_active_pkt_length-1) 
+					($mux valid_active_pkt_word_read (down_counter - 1) down_counter))
+			
+			$volatile read_from_1 := 
+				($reduce |
+					(~p1_valid)
+					(next_active_packet == 1))
+
+			$volatile read_from_2 := 
+				($reduce |
+					(~p2_valid) 
+					(next_active_packet == 2))
+
+			$volatile read_from_3 := 
+				($reduce |
+					(~p3_valid)
+					(next_active_packet == 3))
+
+			$volatile read_from_4 := 
+				($reduce |
+					(~p4_valid)
+					(next_active_packet == 4))
+
+			// send to output port.
+			$volatile data_to_out := ($mux (next_active_packet == 1) ($slice pkt_1_e_word 31 0)
+									 ($mux (next_active_packet == 2)($slice pkt_2_e_word 31 0)
+									 ($mux (next_active_packet == 3)($slice pkt_3_e_word 31 0)
+									 ($slice pkt_4_e_word 31 0))))
+
+			$volatile send_flag := ($excmux 
+							(next_active_packet == 1) p1_valid 
+							(next_active_packet == 2) p2_valid
+							(next_active_packet == 3) p3_valid
+							(next_active_packet == 4) p4_valid )
+						
+			// send if necessary..
+			$guard (send_flag)
+				out_data_1 := data_to_out
+
+			$rreport ( outputPort_1_Daemon 
+						send_information  next_active_packet next_pkt_with_priority send_flag p1_valid p2_valid p3_valid p4_valid data_to_out)
+
+		$while 1
+	}
+}
+
+
+
+
+
+
+
+
+
+$module [ outputPort_2_Daemon ]
+	$in () $out () $is
+{
+	$branchblock[loop] {
+
+		$dopipeline $depth OUTPUT_PORT_PIPELINE_DEPTH 
+			$fullrate 
+
+			$merge $entry $loopback
+
+				$phi pkt_1_e_word := 
+					ZERO_33 $on $entry 
+						$guard (read_from_1) 
+							noblock_obuf_1_2  $on $loopback
+
+
+				$phi pkt_2_e_word := 
+					ZERO_33 $on $entry 
+						$guard (read_from_2) 
+							noblock_obuf_2_2  $on $loopback
+
+
+				$phi pkt_3_e_word := 
+					ZERO_33 $on $entry 
+						$guard (read_from_3) 
+							noblock_obuf_3_2  $on $loopback
+
+
+				$phi pkt_4_e_word := 
+					ZERO_33 $on $entry 
+						$guard (read_from_4) 
+							noblock_obuf_4_2  $on $loopback
+
+				$phi active_packet := 
+					ZERO_3 $on $entry next_active_packet $on $loopback
+				
+			$phi down_counter := 
+					ZERO_16 $on $entry next_down_counter $on $loopback
+
+			$phi pkt_with_priority := 
+					1 $on $entry next_pkt_with_priority $on $loopback
+
+			$endmerge				
+			$volatile p1_valid := (pkt_1_e_word [] 32)
+			$volatile p2_valid := (pkt_2_e_word [] 32)
+			$volatile p3_valid := (pkt_3_e_word [] 32)
+			$volatile p4_valid := (pkt_4_e_word [] 32)
+			//
+			// This report statement is useful in debugging.
+			//
+			$rreport ( outputPort_2_Daemon 
+					state_summary 
+						active_packet
+						down_counter
+						pkt_with_priority
+						read_from_1 
+						pkt_1_e_word 
+						read_from_2
+						pkt_2_e_word
+						read_from_3 
+						pkt_3_e_word
+						read_from_4
+						pkt_4_e_word
+				)
+
+
+			$volatile valid_active_pkt_word_read :=
+				($excmux 
+					(active_packet == 1) p1_valid
+					(active_packet == 2) p2_valid
+					(active_packet == 3) p3_valid
+					(active_packet == 4) p4_valid)
+
+			
+			$volatile $call prioritySelect 
+					   (down_counter active_packet pkt_with_priority p1_valid p2_valid p3_valid p4_valid)
+							(next_active_packet next_pkt_with_priority)
+
+			$volatile valid_active_pkt_length :=
+				($excmux 
+					(next_active_packet == 1) ($slice pkt_1_e_word 23 8)
+					(next_active_packet == 2) ($slice pkt_2_e_word 23 8)
+					(next_active_packet == 3) ($slice pkt_3_e_word 23 8)
+					(next_active_packet == 4) ($slice pkt_4_e_word 23 8))
+			$volatile started_new_packet := 
+				((next_active_packet != 0) & (down_counter == 0))
+
+
+			$volatile next_down_counter :=
+				($mux started_new_packet (valid_active_pkt_length-1) 
+					($mux valid_active_pkt_word_read (down_counter - 1) down_counter))
+			
+			$volatile read_from_1 := 
+				($reduce |
+					(~p1_valid)
+					(next_active_packet == 1))
+
+			$volatile read_from_2 := 
+				($reduce |
+					(~p2_valid) 
+					(next_active_packet == 2))
+
+			$volatile read_from_3 := 
+				($reduce |
+					(~p3_valid)
+					(next_active_packet == 3))
+
+			$volatile read_from_4 := 
+				($reduce |
+					(~p4_valid)
+					(next_active_packet == 4))
+
+			// send to output port.
+			$volatile data_to_out := ($mux (next_active_packet == 1) ($slice pkt_1_e_word 31 0)
+									 ($mux (next_active_packet == 2)($slice pkt_2_e_word 31 0)
+									 ($mux (next_active_packet == 3)($slice pkt_3_e_word 31 0)
+									 ($slice pkt_4_e_word 31 0))))
+
+			$volatile send_flag := ($excmux 
+							(next_active_packet == 1) p1_valid 
+							(next_active_packet == 2) p2_valid
+							(next_active_packet == 3) p3_valid
+							(next_active_packet == 4) p4_valid )
+						
+			// send if necessary..
+			$guard (send_flag)
+				out_data_2 := data_to_out
+
+			$rreport ( outputPort_2_Daemon 
+						send_information  next_active_packet next_pkt_with_priority send_flag p1_valid p2_valid p3_valid p4_valid data_to_out)
+
+		$while 1
+	}
+}
+
+
+
+
+
+
+
+
+
+$module [ outputPort_3_Daemon ]
+	$in () $out () $is
+{
+	$branchblock[loop] {
+
+		$dopipeline $depth OUTPUT_PORT_PIPELINE_DEPTH 
+			$fullrate 
+
+			$merge $entry $loopback
+
+				$phi pkt_1_e_word := 
+					ZERO_33 $on $entry 
+						$guard (read_from_1) 
+							noblock_obuf_1_3  $on $loopback
+
+
+				$phi pkt_2_e_word := 
+					ZERO_33 $on $entry 
+						$guard (read_from_2) 
+							noblock_obuf_2_3  $on $loopback
+
+
+				$phi pkt_3_e_word := 
+					ZERO_33 $on $entry 
+						$guard (read_from_3) 
+							noblock_obuf_3_3  $on $loopback
+
+
+				$phi pkt_4_e_word := 
+					ZERO_33 $on $entry 
+						$guard (read_from_4) 
+							noblock_obuf_4_3  $on $loopback
+
+				$phi active_packet := 
+					ZERO_3 $on $entry next_active_packet $on $loopback
+				
+			$phi down_counter := 
+					ZERO_16 $on $entry next_down_counter $on $loopback
+
+			$phi pkt_with_priority := 
+					1 $on $entry next_pkt_with_priority $on $loopback
+
+			$endmerge				
+			$volatile p1_valid := (pkt_1_e_word [] 32)
+			$volatile p2_valid := (pkt_2_e_word [] 32)
+			$volatile p3_valid := (pkt_3_e_word [] 32)
+			$volatile p4_valid := (pkt_4_e_word [] 32)
+			//
+			// This report statement is useful in debugging.
+			//
+			$rreport ( outputPort_3_Daemon 
+					state_summary 
+						active_packet
+						down_counter
+						pkt_with_priority
+						read_from_1 
+						pkt_1_e_word 
+						read_from_2
+						pkt_2_e_word
+						read_from_3 
+						pkt_3_e_word
+						read_from_4
+						pkt_4_e_word
+				)
+
+
+			$volatile valid_active_pkt_word_read :=
+				($excmux 
+					(active_packet == 1) p1_valid
+					(active_packet == 2) p2_valid
+					(active_packet == 3) p3_valid
+					(active_packet == 4) p4_valid)
+
+			
+			$volatile $call prioritySelect 
+					   (down_counter active_packet pkt_with_priority p1_valid p2_valid p3_valid p4_valid)
+							(next_active_packet next_pkt_with_priority)
+
+			$volatile valid_active_pkt_length :=
+				($excmux 
+					(next_active_packet == 1) ($slice pkt_1_e_word 23 8)
+					(next_active_packet == 2) ($slice pkt_2_e_word 23 8)
+					(next_active_packet == 3) ($slice pkt_3_e_word 23 8)
+					(next_active_packet == 4) ($slice pkt_4_e_word 23 8))
+			$volatile started_new_packet := 
+				((next_active_packet != 0) & (down_counter == 0))
+
+
+			$volatile next_down_counter :=
+				($mux started_new_packet (valid_active_pkt_length-1) 
+					($mux valid_active_pkt_word_read (down_counter - 1) down_counter))
+			
+			$volatile read_from_1 := 
+				($reduce |
+					(~p1_valid)
+					(next_active_packet == 1))
+
+			$volatile read_from_2 := 
+				($reduce |
+					(~p2_valid) 
+					(next_active_packet == 2))
+
+			$volatile read_from_3 := 
+				($reduce |
+					(~p3_valid)
+					(next_active_packet == 3))
+
+			$volatile read_from_4 := 
+				($reduce |
+					(~p4_valid)
+					(next_active_packet == 4))
+
+			// send to output port.
+			$volatile data_to_out := ($mux (next_active_packet == 1) ($slice pkt_1_e_word 31 0)
+									 ($mux (next_active_packet == 2)($slice pkt_2_e_word 31 0)
+									 ($mux (next_active_packet == 3)($slice pkt_3_e_word 31 0)
+									 ($slice pkt_4_e_word 31 0))))
+
+			$volatile send_flag := ($excmux 
+							(next_active_packet == 1) p1_valid 
+							(next_active_packet == 2) p2_valid
+							(next_active_packet == 3) p3_valid
+							(next_active_packet == 4) p4_valid )
+						
+			// send if necessary..
+			$guard (send_flag)
+				out_data_3 := data_to_out
+
+			$rreport ( outputPort_3_Daemon 
+						send_information  next_active_packet next_pkt_with_priority send_flag p1_valid p2_valid p3_valid p4_valid data_to_out)
+
+		$while 1
+	}
+}
+
+
+
+
+
+
+
+
+
+$module [ outputPort_4_Daemon ]
+	$in () $out () $is
+{
+	$branchblock[loop] {
+
+		$dopipeline $depth OUTPUT_PORT_PIPELINE_DEPTH 
+			$fullrate 
+
+			$merge $entry $loopback
+
+				$phi pkt_1_e_word := 
+					ZERO_33 $on $entry 
+						$guard (read_from_1) 
+							noblock_obuf_1_4  $on $loopback
+
+
+				$phi pkt_2_e_word := 
+					ZERO_33 $on $entry 
+						$guard (read_from_2) 
+							noblock_obuf_2_4  $on $loopback
+
+
+				$phi pkt_3_e_word := 
+					ZERO_33 $on $entry 
+						$guard (read_from_3) 
+							noblock_obuf_3_4  $on $loopback
+
+
+				$phi pkt_4_e_word := 
+					ZERO_33 $on $entry 
+						$guard (read_from_4) 
+							noblock_obuf_4_4  $on $loopback
+
+				$phi active_packet := 
+					ZERO_3 $on $entry next_active_packet $on $loopback
+				
+			$phi down_counter := 
+					ZERO_16 $on $entry next_down_counter $on $loopback
+
+			$phi pkt_with_priority := 
+					1 $on $entry next_pkt_with_priority $on $loopback
+
+			$endmerge				
+			$volatile p1_valid := (pkt_1_e_word [] 32)
+			$volatile p2_valid := (pkt_2_e_word [] 32)
+			$volatile p3_valid := (pkt_3_e_word [] 32)
+			$volatile p4_valid := (pkt_4_e_word [] 32)
+			//
+			// This report statement is useful in debugging.
+			//
+			$rreport ( outputPort_4_Daemon 
+					state_summary 
+						active_packet
+						down_counter
+						pkt_with_priority
+						read_from_1 
+						pkt_1_e_word 
+						read_from_2
+						pkt_2_e_word
+						read_from_3 
+						pkt_3_e_word
+						read_from_4
+						pkt_4_e_word
+				)
+
+
+			$volatile valid_active_pkt_word_read :=
+				($excmux 
+					(active_packet == 1) p1_valid
+					(active_packet == 2) p2_valid
+					(active_packet == 3) p3_valid
+					(active_packet == 4) p4_valid)
+
+			
+			$volatile $call prioritySelect 
+					   (down_counter active_packet pkt_with_priority p1_valid p2_valid p3_valid p4_valid)
+							(next_active_packet next_pkt_with_priority)
+
+			$volatile valid_active_pkt_length :=
+				($excmux 
+					(next_active_packet == 1) ($slice pkt_1_e_word 23 8)
+					(next_active_packet == 2) ($slice pkt_2_e_word 23 8)
+					(next_active_packet == 3) ($slice pkt_3_e_word 23 8)
+					(next_active_packet == 4) ($slice pkt_4_e_word 23 8))
+			$volatile started_new_packet := 
+				((next_active_packet != 0) & (down_counter == 0))
+
+
+			$volatile next_down_counter :=
+				($mux started_new_packet (valid_active_pkt_length-1) 
+					($mux valid_active_pkt_word_read (down_counter - 1) down_counter))
+			
+			$volatile read_from_1 := 
+				($reduce |
+					(~p1_valid)
+					(next_active_packet == 1))
+
+			$volatile read_from_2 := 
+				($reduce |
+					(~p2_valid) 
+					(next_active_packet == 2))
+
+			$volatile read_from_3 := 
+				($reduce |
+					(~p3_valid)
+					(next_active_packet == 3))
+
+			$volatile read_from_4 := 
+				($reduce |
+					(~p4_valid)
+					(next_active_packet == 4))
+
+			// send to output port.
+			$volatile data_to_out := ($mux (next_active_packet == 1) ($slice pkt_1_e_word 31 0)
+									 ($mux (next_active_packet == 2)($slice pkt_2_e_word 31 0)
+									 ($mux (next_active_packet == 3)($slice pkt_3_e_word 31 0)
+									 ($slice pkt_4_e_word 31 0))))
+
+			$volatile send_flag := ($excmux 
+							(next_active_packet == 1) p1_valid 
+							(next_active_packet == 2) p2_valid
+							(next_active_packet == 3) p3_valid
+							(next_active_packet == 4) p4_valid )
+						
+			// send if necessary..
+			$guard (send_flag)
+				out_data_4 := data_to_out
+
+			$rreport ( outputPort_4_Daemon 
+						send_information  next_active_packet next_pkt_with_priority send_flag p1_valid p2_valid p3_valid p4_valid data_to_out)
+
+		$while 1
+	}
+}
+
+

@@ -1,0 +1,17 @@
+To clean and start from the beginning run the script "clean.sh"
+The script "debug.sh" compiles all the source codes and the testbench. It also generates all the required executable files.
+Then run 
+	./bin/testbench_aa2c
+to verify using the C Testbench
+
+To do the VHDL Simulation run 
+	./bin/testbench_vhdl 
+in one terminal and
+	./ahir_system_test_bench --stop-time=15000ns --wave=run.ghw
+	in the other terminal
+This generates a dumped wave file which can be viewed using the GTKWave Viewer using the command
+	gtkwave run.ghw
+
+Following things are already done while running build.sh script but for can be run separetly too.
+To build the Aa->C model run the script "compile.sh" present in the hw folder. To clean the generated files run the script "remove.sh" in the same folder.
+To build the Aa->C Testbench run the script "build_aa2c.sh"

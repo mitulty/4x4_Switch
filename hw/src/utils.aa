@@ -1,0 +1,50 @@
+$volatile $module [prioritySelect]
+	$in (down_counter: $uint<16> active_packet: $uint<3>
+			pkt_with_priority:$uint<3> p1_valid p2_valid p3_valid p4_valid: $uint<1>) 
+	$out (next_active_packet: $uint<3> next_pkt_with_priority: $uint<3>)
+$is
+{
+	d0 := (down_counter == 0)
+	// TO implement the round robin policy we check the validity of all the four queues' data  in cyclic order starting from the queue denoted by the pkt_with_priority.
+	
+	check_pkt_4 :=((d0 & (active_packet==0)) & p4_valid)
+	
+
+	$volatile pkt_with_priority_valid :=($mux (pkt_with_priority==1) p1_valid
+					 					($mux (pkt_with_priority==2) p2_valid
+					  					($mux (pkt_with_priority==3) p3_valid p4_valid)))
+
+	$volatile active_packet_priority_valid:= ($mux (active_packet==1) p1_valid
+					  	  ($mux (active_packet==2) p2_valid
+					  	  ($mux (active_packet==3) p3_valid p4_valid)))
+
+	$volatile next_to_pkt_with_priority := ($mux (pkt_with_priority==1) 2
+						($mux (pkt_with_priority==2) 3
+		      			        ($mux (pkt_with_priority==3) 4 1)))
+					  					   
+	$volatile next_to_pkt_with_priority_valid :=($mux (next_to_pkt_with_priority==1) p1_valid
+					  	     ($mux (next_to_pkt_with_priority==2) p2_valid
+					  	     ($mux (next_to_pkt_with_priority==3) p3_valid p4_valid)))
+
+	$volatile last_pkt_with_priority := ($mux (next_to_pkt_with_priority==1) 2
+					     ($mux (next_to_pkt_with_priority==2) 3
+					     ($mux (next_to_pkt_with_priority==3) 4 1)))	
+
+	$volatile last_pkt_with_priority_valid := ($mux (last_pkt_with_priority==1) p1_valid
+					  	   ($mux (last_pkt_with_priority==2) p2_valid
+					  	   ($mux (last_pkt_with_priority==3) p3_valid p4_valid)))
+
+	$volatile selected_packet :=( $prioritymux
+						check_pkt_4 4
+						pkt_with_priority_valid pkt_with_priority
+						next_to_pkt_with_priority_valid next_to_pkt_with_priority
+						last_pkt_with_priority_valid last_pkt_with_priority
+						active_packet_priority_valid active_packet
+						$default 0)
+
+	next_active_packet :=($mux d0 selected_packet active_packet )
+
+	next_pkt_with_priority := ($mux (next_active_packet==1)2
+				  ($mux (next_active_packet==2)3
+				  ($mux (next_active_packet==3)4 1)))							
+}
